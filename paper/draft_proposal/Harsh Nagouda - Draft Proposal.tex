@@ -1,0 +1,171 @@
+\documentclass[a4paper]{article}
+\usepackage{geometry}
+\usepackage{booktabs,tabularx}
+\usepackage[round,authoryear]{natbib}
+\usepackage[hidelinks]{hyperref}
+
+\title{Recoverability of causal structure\\from psychological networks?}
+\author{Harsh Nagouda \\ \small BEP research proposal, first draft}
+\date{21 September 2026}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+Psychological network models represent symptoms as nodes and their associations as
+edges, while the theories that motivate them concern something different: the processes
+by which one symptom brings about another. The gap between the two rarely matters until
+a cross-sectional network is read as a map of where to intervene, at which point an
+association is being asked to carry a causal claim it was never estimated to support.
+This project asks how much causal structure the cross-sectional datasets collected in
+ReBayesed can actually determine, and what, in the data or in the methods, sets the
+limit on orienting an edge.
+
+\paragraph{Research problem.} In these networks an edge is a partial correlation: an
+association that survives conditioning on every other measured symptom
+\citep{borsboom2013}. Causal discovery narrows the possible orientations of such edges
+using the pattern of conditional independencies, but observational data typically leave
+several structures compatible with the same pattern. How much ambiguity remains has not
+been assessed systematically across a published corpus of psychological networks.
+
+\paragraph{Relevance.} Undirected networks are routinely used to discuss intervention,
+yet intervention requires direction. The ReBayesed export shows how thin the evidence
+often is even for the undirected edges: in the tenth of networks with the least data per
+parameter, 56.7\% of edges have inconclusive Bayesian evidence, against 17.1\% in the
+tenth with the most. If an edge cannot be established as present, its direction is
+unlikely to fare better, and I will test whether that expectation holds.
+
+\paragraph{Significance.} Of the 294 networks, 147 have fewer than 5 observations per
+edge parameter and 44 have fewer than 1. If orientation tracks data volume, the result
+gives sample-planning guidance for future studies; if orientation stays ambiguous even
+where edge evidence is strong, the result identifies a limit that more data would not
+remove. Either outcome is informative.
+
+\paragraph{Novelty.} \citet{huth2026} quantified the evidence for undirected edges;
+\citet{huber2024} set out why causal structure is often not identifiable from
+observational data. Neither applied the other's question to this corpus. This project
+does.
+
+\section{Related work}
+
+\citet{huth2026} re-analysed 294 cross-sectional psychological networks from 126 papers
+with Bayesian model averaging and showed that edge evidence depends strongly on sample
+size. Their export is the input here, because it lets me ask of the same datasets
+whether the evidence that supports an edge also supports a direction.
+
+\citet{huber2024} explains why observational data can leave causal structures
+indistinguishable, particularly when common causes are unmeasured. I use this framework
+to fix the assumptions under which any orientation the analysis produces should be read.
+
+For the analysis I will use \texttt{causal-learn} \citep{zheng2024}, which implements
+both PC and FCI in Python. PC assumes that all common causes are measured; FCI drops
+that assumption at the cost of weaker conclusions. Running both from one library keeps
+the comparison in RQ3 consistent, since any difference then reflects the assumption
+rather than the implementation.
+
+\section{Research questions}
+
+\textbf{Main question: how much causal structure can be recovered from these psychological
+datasets, and what limits that recovery?}
+
+\begin{enumerate}
+\item Do networks with more observations per edge parameter yield a greater proportion of determined edge
+orientations?
+\item Does stronger Bayesian evidence for an edge translate into a determined direction
+for that edge?
+\item How do the conclusions change when unmeasured common causes are allowed?
+\end{enumerate}
+
+As a supplementary comparison, I will check whether independent studies that measured
+the same variables agree on orientation.
+
+\section{Expected outcomes}
+
+\paragraph{Approach.} The export contains correlation matrices, sample sizes and
+metadata rather than participant-level observations, so the first task is to confirm
+that Fisher's z tests, and \texttt{causal-learn} on top of them, can run from a
+correlation matrix and a sample size alone. The export also needs cleaning before
+anything runs on it: 233 of the 294 networks have variable names that disagree with
+their matrix labels, and the export holds 294 networks where the article reports 293.
+The data are 71 continuous, 196 ordinal and 27 mixed networks. Exploratory analysis of
+the export is complete and is the source of these counts; the cleaning itself has not
+started. A pilot in week 5 will decide which continuous networks form the analysis
+subset and which test settings to fix.
+
+\paragraph{RQ1: data volume and orientation.} I will run PC on each network in the
+subset, record its adjacencies and the proportion of edges it orients, and then check
+how sensitive those proportions are to the significance threshold and to variable
+ordering. Because 58 of the 126 papers report several networks that are potentially
+dependent, I will select one network per paper by a prespecified rule and report the
+others separately, so that dependent networks do not inflate the trend. I expect the
+oriented proportion to rise with observations per edge parameter but to stay well short
+of complete, which is the pattern that would show data volume matters without being the
+whole story.
+
+\paragraph{RQ2: statistical evidence and direction.} I will relate each network's
+oriented proportion to its proportion of inconclusive Bayesian edges under each of the
+three priors. Bayesian edge evidence enters as a covariate rather than as ground truth,
+because a partial-correlation edge and a causal adjacency are not the same object: an
+edge can be estimated with confidence and still leave its direction undetermined. Those
+edges, strong evidence with no direction, are the ones I will examine most closely,
+since they mark where the limit is set by identifiability rather than by sample size.
+
+\paragraph{RQ3: allowing unmeasured common causes.} I will run FCI on the same subset.
+FCI and PC do not output the same objects, so counting arrowheads would compare unlike
+things; instead I will compare statements both can make, such as whether one variable
+is an ancestor of another, and quantify how much of PC's structure dissolves once
+unmeasured common causes are permitted. Both algorithms still assume acyclicity, the
+Markov and faithfulness conditions, and the absence of selection bias
+\citep{huber2024}, and these assumptions bound what any result in this project can
+claim.
+
+\paragraph{Cross-study comparison and outputs.} Depression is the largest subtopic, with
+32 networks, and the first candidate for comparing orientations across studies; whether
+that comparison is feasible depends on the metadata cleaning in week 4. Where studies
+disagree, I will distinguish a direction left unresolved from one that conflicts across
+studies, since only the second bears on replication. The deliverables are a cleaned
+pipeline, reproducible analyses, figures and a written interpretation that claims no
+more than the data determine under the assumptions above.
+
+\section{Research plan}
+
+The project runs for 13 weeks and is now in week 4. The first three weeks went to
+exploratory analysis of the export, which produced the descriptive figures above and
+exposed the cleaning problems; the plan below covers the remaining ten weeks. Data
+coordination is shared with the other students on the project; I lead the Python
+analyses and the interpretation. Literature review and writing run alongside the
+analysis rather than after it.
+
+\begin{center}
+\begin{tabularx}{\textwidth}{@{}r X@{}}
+\toprule
+\textbf{Week} & \textbf{Activity and output} \\
+\midrule
+4 & Clean metadata; resolve the 294--293 discrepancy; identify eligible networks and studies. \\
+5 & Pilot: validate Fisher's z and \texttt{causal-learn} on correlation-matrix input; fix the subset and test settings. \\
+6 & Build and validate the PC pipeline; run PC on the subset. \\
+7 & Summarise adjacencies and orientations; analyse data volume and sensitivity (RQ1). \\
+8 & Relate orientation to Bayesian evidence (RQ2). \\
+9 & Run FCI on the matched subset. \\
+10 & Compare analyses with and without unmeasured causes (RQ3). \\
+11 & Complete the cross-study comparison and checks; draft results. \\
+12 & Complete the thesis draft and discuss feedback. \\
+13 & Revise, check reproducibility and prepare the presentation. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+The compression falls on weeks 6 and 11, where building the PC pipeline shares a week
+with running it and the cross-study comparison shares a week with the final checks.
+Both are workable if the pilot in week 5 settles the subset and settings, which is why
+that week is protected. Two further constraints are addressed early. If FCI proves
+computationally prohibitive, I will run both algorithms on a smaller prespecified
+subset so that RQ3 survives intact. If no independent studies share variables, I will
+report that as a limitation of the corpus rather than substitute within-paper
+comparisons, which cannot count as replication. The subset is fixed by week 5.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}
