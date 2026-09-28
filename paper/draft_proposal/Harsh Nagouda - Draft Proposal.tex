@@ -4,9 +4,9 @@
 \usepackage[round,authoryear]{natbib}
 \usepackage[hidelinks]{hyperref}
 
-\title{Recoverability of causal structure\\from psychological networks?}
-\author{Harsh Nagouda \\ \small BEP research proposal, first draft}
-\date{21 September 2026}
+\title{Bridging Correlation and Causation: Recovering Causal Structure in Psychological Networks}
+\author{Harsh Nagouda \\ \small BEP research proposal}
+\date{28 September 2026}
 
 \begin{document}
 \maketitle
@@ -14,38 +14,28 @@
 \section{Introduction}
 
 Psychological network models represent symptoms as nodes and their associations as
-edges, while the theories that motivate them concern something different: the processes
-by which one symptom brings about another. The gap between the two rarely matters until
-a cross-sectional network is read as a map of where to intervene, at which point an
-association is being asked to carry a causal claim it was never estimated to support.
+edges, while the theories that motivate them concern something different, the processes
+by which one symptom brings about another are seldom well backed. The gap is crucial in 
+order to establish a true causal relationship and prevent flawed assumptions.
 This project asks how much causal structure the cross-sectional datasets collected in
-ReBayesed can actually determine, and what, in the data or in the methods, sets the
-limit on orienting an edge.
+ReBayesed can actually determine, and what {-} in the data or in the methods {-} sets the limit on the orientation of an edge.
 
 \paragraph{Research problem.} In these networks an edge is a partial correlation: an
-association that survives conditioning on every other measured symptom
-\citep{borsboom2013}. Causal discovery narrows the possible orientations of such edges
-using the pattern of conditional independencies, but observational data typically leave
-several structures compatible with the same pattern. How much ambiguity remains has not
-been assessed systematically across a published corpus of psychological networks.
+association that survives conditioning on (i.e.,\ holding constant) every other measured symptom \citep{borsboom2013}. Causal discovery narrows the possible orientations of such edges using the pattern of conditional independencies, but observational data typically exhibits several structures compatible with the same pattern. There is still yet to be a systematic assessment across a published corpus of psychological networks regarding the extent of the ambiguity.
 
 \paragraph{Relevance.} Undirected networks are routinely used to discuss intervention,
-yet intervention requires direction. The ReBayesed export shows how thin the evidence
-often is even for the undirected edges: in the tenth of networks with the least data per
+yet, ironically, intervention requires direction. The ReBayesed export shows how thin the evidence
+often is for the undirected edges: in the tenth of networks with the least data per
 parameter, 56.7\% of edges have inconclusive Bayesian evidence, against 17.1\% in the
 tenth with the most. If an edge cannot be established as present, its direction is
-unlikely to fare better, and I will test whether that expectation holds.
+unlikely to fare better, and I would like to test whether that expectation holds.
 
 \paragraph{Significance.} Of the 294 networks, 147 have fewer than 5 observations per
-edge parameter and 44 have fewer than 1. If orientation tracks data volume, the result
-gives sample-planning guidance for future studies; if orientation stays ambiguous even
-where edge evidence is strong, the result identifies a limit that more data would not
-remove. Either outcome is informative.
+edge parameter and 44 have fewer than 1. If it turns out that the orientation is simply a consequence of the volume of the data, the findings could be used as guidance for sample planning in future studies. On the other hand, if the orientation stays ambigious despite presence of strong edge evidence, the findings would identify a limit that more data would not remove. This would be a win-win scenario in either case. 
 
 \paragraph{Novelty.} \citet{huth2026} quantified the evidence for undirected edges;
 \citet{huber2024} set out why causal structure is often not identifiable from
-observational data. Neither applied the other's question to this corpus. This project
-does.
+observational data. Neither applied the other's question to this corpus on studies in ReBayesed, and I would like to cross examine the networks using their theories.
 
 \section{Related work}
 
@@ -59,20 +49,18 @@ indistinguishable, particularly when common causes are unmeasured. I use this fr
 to fix the assumptions under which any orientation the analysis produces should be read.
 
 For the analysis I will use \texttt{causal-learn} \citep{zheng2024}, which implements
-both PC and FCI in Python. PC assumes that all common causes are measured; FCI drops
-that assumption at the cost of weaker conclusions. Running both from one library keeps
-the comparison in RQ3 consistent, since any difference then reflects the assumption
-rather than the implementation.
+both PC and FCI in Python. PC assumes that all common causes are measured, and FCI drops
+that assumption at the cost of weaker conclusions. Using both algorithms from the same library reduces implementation differences as a potential source of variation, making it easier to interpret differences between PC and FCI in light of their different assumptions. 
+
+It is however, certainly possible that the algorithms themselves occasionally lead to different results when run repeatedly on larger networks due to different starting positions and local maxima.
 
 \section{Research questions}
 
-\textbf{Main question: how much causal structure can be recovered from these psychological
-datasets, and what limits that recovery?}
+\textbf{Main question: how much causal structure can be recovered from psychological datasets (that are part of the ReBayesed project), and what limits that recovery?}
 
 \begin{enumerate}
-\item Do networks with more observations per edge parameter yield a greater proportion of determined edge
-orientations?
-\item Does stronger Bayesian evidence for an edge translate into a determined direction
+\item Do networks with more observations per edge parameter yield a greater proportion of determined edge orientations?
+\item Does stronger Bayesian evidence for an edge translate to a determined direction
 for that edge?
 \item How do the conclusions change when unmeasured common causes are allowed?
 \end{enumerate}
@@ -82,43 +70,23 @@ the same variables agree on orientation.
 
 \section{Expected outcomes}
 
-\paragraph{Approach.} The export contains correlation matrices, sample sizes and
-metadata rather than participant-level observations, so the first task is to confirm
-that Fisher's z tests, and \texttt{causal-learn} on top of them, can run from a
-correlation matrix and a sample size alone. The export also needs cleaning before
-anything runs on it: 233 of the 294 networks have variable names that disagree with
+\paragraph{Approach.} The export contains correlation matrices, 
+sample sizes and metadata rather than participant-level observations, so the first task is to confirm that Fisher's z tests, and \texttt{causal-learn} on top of them, can run from a
+correlation matrix and a sample size alone. The export would also need to be cleaned before
+anything runs on it. 233 of the 294 networks have variable names that disagree with
 their matrix labels, and the export holds 294 networks where the article reports 293.
-The data are 71 continuous, 196 ordinal and 27 mixed networks. Exploratory analysis of
-the export is complete and is the source of these counts; the cleaning itself has not
-started. A pilot in week 5 will decide which continuous networks form the analysis
-subset and which test settings to fix.
+The data comprises of 71 continuous, 196 ordinal and 27 mixed networks. This was discovered during an exploratory data analysis.
 
-\paragraph{RQ1: data volume and orientation.} I will run PC on each network in the
+\paragraph{RQ1: To what extent is the number of observations per edge parameter associated with the proportion of edges that can be oriented?} I will run PC on each network in the
 subset, record its adjacencies and the proportion of edges it orients, and then check
 how sensitive those proportions are to the significance threshold and to variable
 ordering. Because 58 of the 126 papers report several networks that are potentially
 dependent, I will select one network per paper by a prespecified rule and report the
-others separately, so that dependent networks do not inflate the trend. I expect the
-oriented proportion to rise with observations per edge parameter but to stay well short
-of complete, which is the pattern that would show data volume matters without being the
-whole story.
+others separately, so that dependent networks do not inflate the trend. For papers containing multiple eligible networks, I will randomly select one network using a fixed seed for the primary analysis and analyse the remaining networks separately as a sensitivity check. I expect networks with more observations per edge parameter to have a higher proportion of oriented edges, but I do not expect all edges to become oriented as data volume increases.
 
-\paragraph{RQ2: statistical evidence and direction.} I will relate each network's
-oriented proportion to its proportion of inconclusive Bayesian edges under each of the
-three priors. Bayesian edge evidence enters as a covariate rather than as ground truth,
-because a partial-correlation edge and a causal adjacency are not the same object: an
-edge can be estimated with confidence and still leave its direction undetermined. Those
-edges, strong evidence with no direction, are the ones I will examine most closely,
-since they mark where the limit is set by identifiability rather than by sample size.
+\paragraph{RQ2: To what extent is Bayesian evidence for edge presence associated with the proportion of edges that can be oriented?} I will explore whether networks with stronger Bayesian evidence for their edges also tend to have a greater proportion of oriented edges. These two measures capture different properties of a network: strong evidence that an edge is present does not necessarily provide the conditional-independence information required to determine its direction. The Bayesian edge probabilities are also estimates based on a stochastic search over a subset of possible networks. Therefore, I will treat this as an exploratory comparison rather than assuming that stronger edge evidence should lead to more determined orientations.
 
-\paragraph{RQ3: allowing unmeasured common causes.} I will run FCI on the same subset.
-FCI and PC do not output the same objects, so counting arrowheads would compare unlike
-things; instead I will compare statements both can make, such as whether one variable
-is an ancestor of another, and quantify how much of PC's structure dissolves once
-unmeasured common causes are permitted. Both algorithms still assume acyclicity, the
-Markov and faithfulness conditions, and the absence of selection bias
-\citep{huber2024}, and these assumptions bound what any result in this project can
-claim.
+\paragraph{RQ3: To what extent does allowing for unmeasured common causes change the causal structure that can be recovered?} I will run FCI on the same subset and compare its results with PC at two levels. First, I will use descriptive measures such as the total number of oriented edges and agreement in direction where both algorithms provide an orientation. Second, I will compare more complex structural conclusions, such as ancestral relationships, to examine how allowing for unmeasured common causes changes what can be inferred from the networks. Both algorithms still rely on assumptions such as acyclicity, the Markov and faithfulness conditions, which limit how their results can be interpreted.
 
 \paragraph{Cross-study comparison and outputs.} Depression is the largest subtopic, with
 32 networks, and the first candidate for comparing orientations across studies; whether
@@ -130,40 +98,27 @@ more than the data determine under the assumptions above.
 
 \section{Research plan}
 
-The project runs for 13 weeks and is now in week 4. The first three weeks went to
-exploratory analysis of the export, which produced the descriptive figures above and
-exposed the cleaning problems; the plan below covers the remaining ten weeks. Data
-coordination is shared with the other students on the project; I lead the Python
-analyses and the interpretation. Literature review and writing run alongside the
-analysis rather than after it.
+The project runs for 13 weeks and is now in week 5. The first three weeks went to
+exploratory analysis of the export. The plan below is a roadmap of my timely approach to the research. 
 
 \begin{center}
 \begin{tabularx}{\textwidth}{@{}r X@{}}
 \toprule
 \textbf{Week} & \textbf{Activity and output} \\
 \midrule
-4 & Clean metadata; resolve the 294--293 discrepancy; identify eligible networks and studies. \\
-5 & Pilot: validate Fisher's z and \texttt{causal-learn} on correlation-matrix input; fix the subset and test settings. \\
-6 & Build and validate the PC pipeline; run PC on the subset. \\
-7 & Summarise adjacencies and orientations; analyse data volume and sensitivity (RQ1). \\
+4 & EDA and metadata cleaning, identify eligible networks and studies. \\
+5 & Validate Fisher's z and \texttt{causal-learn} on correlation-matrix input. \\
+6 & Build and validate the PC pipeline, and run PC on the subset. \\
+7 & Summarise adjacencies and orientations, and analyse data volume and sensitivity (RQ1). \\
 8 & Relate orientation to Bayesian evidence (RQ2). \\
 9 & Run FCI on the matched subset. \\
 10 & Compare analyses with and without unmeasured causes (RQ3). \\
-11 & Complete the cross-study comparison and checks; draft results. \\
+11 & Complete the cross-study comparison and checks. \\
 12 & Complete the thesis draft and discuss feedback. \\
 13 & Revise, check reproducibility and prepare the presentation. \\
 \bottomrule
 \end{tabularx}
 \end{center}
-
-The compression falls on weeks 6 and 11, where building the PC pipeline shares a week
-with running it and the cross-study comparison shares a week with the final checks.
-Both are workable if the pilot in week 5 settles the subset and settings, which is why
-that week is protected. Two further constraints are addressed early. If FCI proves
-computationally prohibitive, I will run both algorithms on a smaller prespecified
-subset so that RQ3 survives intact. If no independent studies share variables, I will
-report that as a limitation of the corpus rather than substitute within-paper
-comparisons, which cannot count as replication. The subset is fixed by week 5.
 
 \bibliographystyle{plainnat}
 \bibliography{references}
