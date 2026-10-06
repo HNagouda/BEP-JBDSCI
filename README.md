@@ -13,6 +13,7 @@ from the [ReBayesed app](https://uvasobe.shinyapps.io/ReBayesed/):
 2. Click "Select/Deselect Filtered" to select every network.
 3. Click "Download selected network results as RDS".
 4. Put the file in `data/Individual_Studies/`.
+5. Please cite the ReBayesed project in your works.
 
 That gives one `.rds` holding all 294 networks, named after the day you downloaded it.
 Mine is `filtered-network-data-2026-09-21.rds`, and the exploration below reads that
