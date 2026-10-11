@@ -1,4 +1,6 @@
-data/
+# The data is someone else's, see the README. The notes on cleaning it are ours.
+data/*
+!data/cleaning_notes.md
 *.aux
 *.bbl
 *.blg
