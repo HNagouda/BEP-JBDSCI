@@ -13,6 +13,8 @@ proposal/*.pdf
 __pycache__/
 *.pyc
 .venv/
+.Rhistory
+.RData
 venv/
 .ipynb_checkpoints/
 .DS_Store
