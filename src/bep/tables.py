@@ -12,7 +12,7 @@ TABLE_NAMES = ["networks", "variables", "edges"]
 # * ====================================================================
 
 
-def _scalar(value):
+def _to_scalar(value):
     if value is None:
         return None
     else:
@@ -20,12 +20,12 @@ def _scalar(value):
 
 
 def _text(value):
-    value = _scalar(value)
+    value = _to_scalar(value)
 
     return None if value is None else str(value)
 
 
-def _year(value):
+def _year_to_float(value):
     """'2021.0' -> 2021."""
     
     value = _text(value)
@@ -34,7 +34,6 @@ def _year(value):
 
 
 def _labels(entry):
-    """Node names, read off the correlation matrix's dimnames."""
 
     matrix = entry["meta"]["correlation_matrix"]
 
@@ -68,7 +67,7 @@ def network_row(network_id, entry):
         "paper_id": _text(meta["paperID"]),
         "citation": _text(meta["citation"]),
         "authors": _text(meta["authors"]),
-        "year": _year(meta["year"]),
+        "year": _year_to_float(meta["year"]),
         "doi": _text(meta["doi"]),
         "data_link": _text(meta["data_link"]),
         "model": _text(meta["model"]),
@@ -79,12 +78,12 @@ def network_row(network_id, entry):
         "variable_names": _text(meta["variable_names"]),
         "type_of_variables": _text(meta["type_of_variables"]),
         "sample_type": _text(meta["sample_type"]),
-        "sample_size": int(_scalar(meta["sample_size"])),
-        "nodes": int(_scalar(entry["p"])),
-        "possible_edges": int(_scalar(entry["n_edges"])),
+        "sample_size": int(_to_scalar(meta["sample_size"])),
+        "nodes": int(_to_scalar(entry["p"])),
+        "possible_edges": int(_to_scalar(entry["n_edges"])),
         # Six networks have no ggmModSelect fit.
-        "modselect_included": _scalar(entry.get("modSelect_n_inc")),
-        "ebic_included": _scalar(entry["EBIC_n_inc"]),
+        "modselect_included": _to_scalar(entry.get("modSelect_n_inc")),
+        "ebic_included": _to_scalar(entry["EBIC_n_inc"]),
     }
 
 
@@ -121,7 +120,6 @@ def edge_rows(network_id, entry):
             "covariance": _upper(meta["covariance_matrix"], rows, columns),
             "modselect_estimate": _upper(entry.get("modSelect_parameters"), rows, columns),
             "ebic_estimate": _upper(entry["EBIC_parameters"], rows, columns),
-            # BGGM, BGGM2 and BGGM3 differ only in prior SD: sqrt(1/8), sqrt(1/24), sqrt(1/16).
             "bggm_estimate": _upper(entry["BGGM_parameters"], rows, columns),
             "bggm_inclusion_probability": _upper(entry["BGGM_inc_probs"], rows, columns),
             "bggm_bf": _upper(entry["BGGM_BF"], rows, columns),
@@ -157,7 +155,6 @@ def build_tables(export):
 
 
 def read_table(name):
-    """One of TABLE_NAMES, as written by `uv run python -m bep.tables`."""
     if name not in TABLE_NAMES:
         raise ValueError(f"table must be one of {TABLE_NAMES}, got {name!r}")
     else:
