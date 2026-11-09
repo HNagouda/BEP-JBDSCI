@@ -50,6 +50,7 @@ To run, please use the following commands:
     uv run python -m bep.download_osf
     uv run python -m bep.tables
 ```
+
 ## Exploratory analysis
 
 `src/eda/exploration.ipynb` is a first pass over the export: how big the corpus is, what
@@ -59,3 +60,34 @@ environment; `uv sync` installs the kernel it needs.
 
 Research notes, reading and reference PDFs live in the Obsidian vault at
 `~/Documents/Obsidian/BEP`, not here.
+
+## Research Question 1 - To what extent is the number of observations per edge parameter associated with the proportion of edges that can be oriented?
+
+Excluding N0423_2, `R/rq1.R` selects one network per paper using seed `2026`, runs PC on the 126 primary
+networks, then runs the other 167 separately. 
+
+R packages are managed with renv. From the repository root:
+
+```sh
+Rscript -e 'renv::restore()'
+Rscript R/rq1.R
+uv run python -m bep.rq1
+```
+
+Used R to fit the graphs and export csvs to analyze in python. 
+
+The main settings are alpha 0.01, `gaussCItest`, stable skeleton and relaxed
+orientation. 
+
+The additional networks are a descriptive sensitivity check, not independent
+replications. 
+
+The sensitivity checks run at alpha 0.001 and 0.05 and repeat alpha 0.01 with
+three shuffled variable orders (seeds 2027–2029):
+
+```sh
+Rscript R/rq1_sensitivity.R
+uv run python -m bep.rq1_sensitivity
+```
+
+They save separate CSVs under `outputs/pcalg/rq1/sensitivity/`

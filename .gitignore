@@ -9,7 +9,6 @@ data/*
 *.synctex.gz
 *.fls
 *.fdb_latexmk
-proposal/*.pdf
 __pycache__/
 *.pyc
 .venv/
@@ -18,3 +17,11 @@ __pycache__/
 venv/
 .ipynb_checkpoints/
 .DS_Store
+
+# Generated PC results - reproduce with the R and Python analysis scripts.
+/outputs/pcalg/
+
+.pytest_cache/
+.ruff_cache/
+
+/paper/partial_draft/main.pdf
